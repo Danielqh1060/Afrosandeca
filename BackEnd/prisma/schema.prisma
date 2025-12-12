@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,7 +9,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Ping {
-  id    Int     @id @default(autoincrement())
-  texto String
+// Enums: Restringen los valores permitidos a nivel de base de datos
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+  SUPERADMIN
+}
+
+model User {
+  id            String    @id @default(uuid()) // UUID es estándar pro
+  email         String    @unique
+  password      String    // Hash encriptado, NUNCA texto plano
+  fullName      String
+  role          Role      @default(USER)
+  isActive      Boolean   @default(true)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("users") // Buen hábito: nombres de tablas en minúsculas y plural
 }
