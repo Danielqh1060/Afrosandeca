@@ -1,0 +1,40 @@
+services:
+  # Base de Datos
+  db:
+    image: postgres:15-alpine
+    container_name: afro_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123 # Cambia esto en producción
+      POSTGRES_DB: afrosandeca_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Almacenamiento (S3 Compatible)
+  minio:
+    image: minio/minio
+    container_name: afro_minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Consola Web
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+
+  # Interfaz visual para ver la BD (Opcional, pero útil para Juniors)
+  adminer:
+    image: adminer
+    container_name: afro_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+  minio_data:
