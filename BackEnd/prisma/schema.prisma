@@ -18,15 +18,49 @@ enum Role {
 }
 
 model User {
-  id            String    @id @default(uuid()) // UUID es estándar pro
+  id            String    @id @default(uuid())
   email         String    @unique
-  password      String    // Hash encriptado, NUNCA texto plano
+  password      String
   fullName      String
   role          Role      @default(USER)
   isActive      Boolean   @default(true)
   
+  // Relaciones
+  posts         Post[]
+  
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  @@map("users") // Buen hábito: nombres de tablas en minúsculas y plural
+  @@map("users")
+}
+
+model Section {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique // Ej: "Noticias", "Cultura"
+  slug        String    @unique // Ej: "noticias", "cultura" (para la URL)
+  description String?
+  isActive    Boolean   @default(true)
+  
+  // Relaciones
+  posts       Post[]    // Relación Many-to-Many implícita con Posts
+
+  @@map("sections")
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  content     String    @db.Text // Texto largo
+  published   Boolean   @default(true)
+  
+  // Relaciones
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String
+  
+  sections    Section[] // Un post puede estar en varias secciones
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("posts")
 }
