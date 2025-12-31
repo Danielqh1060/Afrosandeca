@@ -50,17 +50,29 @@ model Section {
 model Post {
   id          String    @id @default(uuid())
   title       String
-  content     String    @db.Text // Texto largo
+  content     String    @db.Text
   published   Boolean   @default(true)
-  
-  // Relaciones
-  author      User      @relation(fields: [authorId], references: [id])
   authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  sections    Section[]
   
-  sections    Section[] // Un post puede estar en varias secciones
-  
+  attachments Media[]   
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@map("posts")
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  url       String   // La URL que te devuelve MinIO
+  type      String   // 'IMAGE' o 'VIDEO'
+  
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String?  // Puede ser nulo inicialmente, pero se vinculará al Post
+
+  createdAt DateTime @default(now())
+
+  @@map("media")
 }

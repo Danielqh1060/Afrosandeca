@@ -1,5 +1,5 @@
 import api from './axios';
-import { Post, CreatePostDto, Section } from '../types';
+import type { Post, CreatePostDto, Section } from '../types';
 
 export const postsApi = {
   getAll: async () => {

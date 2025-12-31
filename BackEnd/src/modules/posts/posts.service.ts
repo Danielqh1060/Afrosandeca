@@ -7,7 +7,8 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createPostDto: CreatePostDto, authorId: string) {
-    const { sectionIds, ...postData } = createPostDto;
+ 
+    const { sectionIds, imageUrls, ...postData } = createPostDto;
 
     return this.prisma.post.create({
       data: {
@@ -16,12 +17,17 @@ export class PostsService {
         sections: {
           connect: sectionIds?.map((id) => ({ id })) || [],
         },
+        attachments: {
+          create: imageUrls?.map((url) => ({
+            url: url,
+            type: 'IMAGE',
+          })) || [],
+        },
       },
       include: {
         sections: true,
-        author: {
-          select: { fullName: true, email: true },
-        },
+        author: { select: { fullName: true } },
+        attachments: true,
       },
     });
   }
@@ -31,9 +37,8 @@ export class PostsService {
       orderBy: { createdAt: 'desc' },
       include: {
         sections: true,
-        author: {
-          select: { fullName: true },
-        },
+        author: { select: { fullName: true } },
+        attachments: true, // <--- Incluye las imágenes al listar
       },
     });
   }

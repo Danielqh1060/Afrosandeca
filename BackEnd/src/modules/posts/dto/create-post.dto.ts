@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreatePostDto {
   @IsNotEmpty()
@@ -10,6 +10,11 @@ export class CreatePostDto {
   content: string;
 
   @IsArray()
-  @IsOptional() // Si no envían secciones, lo asignamos a "General" por defecto en la lógica
+  @IsOptional()
   sectionIds?: number[];
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  imageUrls?: string[];
 }
