@@ -1,5 +1,7 @@
 export interface User {
+  id: string;
   email: string;
+  role: string;
   fullName: string;
 }
 
@@ -9,6 +11,20 @@ export interface Section {
   slug: string;
 }
 
+export interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+  parentId: string | null;
+  author: {
+    id: string;
+    fullName: string;
+    role: string;
+  };
+  reactions: { userId: string }[];
+  _count?: { reactions: number };
+}
+
 export interface Post {
   id: string;
   title: string;
@@ -16,10 +32,21 @@ export interface Post {
   createdAt: string;
   author: User;
   sections: Section[];
+  attachments: {
+    id: string;
+    url: string;
+    type: string;
+  }[];
+  comments: Comment[];
+  reactions: {
+    userId: string;
+    createdAt: string;
+  }[];
 }
 
 export interface CreatePostDto {
   title: string;
   content: string;
   sectionIds: number[];
+  imageUrls?: string[];
 }
